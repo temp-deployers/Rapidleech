@@ -386,6 +386,11 @@ function geturl($host, $port, $url, $referer = 0, $cookie = 0, $post = 0, $saveT
 				echo "<script type='text/javascript'>pr('$percent', '$received', '$speed');</script>";
 				flush();
 				$last = $bytesReceived;
+				
+				// Update download tracker for background monitoring
+				if (!empty($GLOBALS['current_download_id']) && function_exists('update_download_progress')) {
+					update_download_progress($GLOBALS['current_download_id'], $bytesReceived + $Resume['from'], $bytesTotal + $Resume['from']);
+				}
 			}
 			if (!empty($bytesTotal) && ($bytesReceived + $chunkSize) > $bytesTotal) $chunkSize = max($bytesTotal - $bytesReceived, 4096);
 		} while (!feof($fp));

@@ -126,7 +126,7 @@ if (!defined('RAPIDLEECH')) {
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: -3px; margin-right: 6px;">
                     <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
                 </svg>
-                <?php echo lang(332); ?>
+                Pending Downloads
             </button>
         </nav>
 
@@ -460,74 +460,116 @@ if (!defined('RAPIDLEECH')) {
             /* ]]> */
             </script>
 
-            <!-- Tab 4: Link Checker -->
+            <!-- Tab 4: Pending Downloads -->
             <div class="hide-table tab-content" id="tb4">
                 <div style="text-align: center;">
                     <h3 style="margin-bottom: 16px; color: var(--text-primary);">
                         <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: -5px; margin-right: 8px;">
                             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
                         </svg>
-                        <?php echo lang(267); ?>
+                        Pending Downloads
                     </h3>
+                    <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 20px;">Downloads running in background (when page was closed)</p>
                     
-                    <?php
-                    $name = array_keys($sites);
-                    sort($name);
-                    $workswith = implode(' | ', $name);
-                    ?>
-                    <div class="workswith">
-                        <?php echo $workswith; ?>
-                        <br><strong><?php echo lang(268); ?></strong><br>
-                        Anonym.to | Linkbucks.com | Lix.in<br>
-                        Rapidshare.com Folders | Usercash.com
+                    <div id="pending-downloads-container" style="min-height: 100px; padding: 20px;">
+                        <div id="pending-downloads-loading" style="display:none;">
+                            <img alt="Loading..." src="templates/plugmod/images/ajax-loading.gif" style="vertical-align: middle;"> Loading...
+                        </div>
+                        <div id="pending-downloads-empty" style="display:none; color: var(--text-muted); padding:20px;">
+                            No pending downloads at the moment.
+                        </div>
+                        <table id="pending-downloads-table" class="filelist" cellpadding="5" cellspacing="0" width="100%" style="display:none;">
+                            <thead>
+                                <tr class="flisttblhdr">
+                                    <td><b>Filename</b></td>
+                                    <td><b>Progress</b></td>
+                                    <td><b>Downloaded</b></td>
+                                    <td><b>Total</b></td>
+                                    <td><b>Elapsed</b></td>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-downloads-body">
+                            </tbody>
+                        </table>
                     </div>
-                    
-                    <form action="ajax.php?ajax=linkcheck" method="post" id="linkchecker" onsubmit="return startLinkCheck();">
-                        <div style="margin: 20px 0;">
-                            <textarea rows="10" name="links" id="links" placeholder="Paste your links here, one per line..." style="width: 100%; max-width: 600px;"></textarea>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <a href="<?php echo $PHP_SELF.'?debug=1' ?>" style="color: var(--text-accent); font-weight: 500;">
-                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="vertical-align: -3px; margin-right: 4px;">
-                                    <path d="M20 8h-2.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
-                                </svg>
-                                <?php echo lang(269); ?>
-                            </a>
-                        </div>
-                        
-                        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
-                            <label class="rl-checkbox">
-                                <input type="checkbox" value="1" name="d" id="chk_d">
-                                <?php echo lang(270); ?>
-                            </label>
-                            <label class="rl-checkbox">
-                                <input type="checkbox" value="1" name="k" id="chk_k">
-                                <?php echo lang(271); ?>
-                            </label>
-                        </div>
-                        
-                        <button type="submit" id="submit" class="rl-btn rl-btn-primary">
-                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                            <?php echo lang(272); ?>
-                        </button>
-                    </form>
-                    
-                    <p style="margin-top: 20px; font-size: 11px; color: var(--text-muted);">
-                        Lix Checker v3.0.0 | Copyright Dman - MaxW.org | Optimized by zpikdum and sarkar<br>
-                        <strong>Mod by eqbal | Ajax'd by TheOnly92 | Updated by Th3-822</strong>
-                    </p>
-                    
-                    <span id="loading" style="display: none; margin-top: 20px;">
-                        <?php echo lang(273); ?>
-                        <img alt="<?php echo lang(274); ?>" src="templates/plugmod/images/ajax-loading.gif" style="vertical-align: middle;">
-                    </span>
-                    
-                    <div id="linkchecker-results"></div>
+                    <p style="font-size: 11px; color: var(--text-muted);">Auto-refreshes every 3 seconds</p>
                 </div>
             </div>
+            
+            <script type="text/javascript">
+            /* <![CDATA[ */
+            var pendingDownloadsTimer = null;
+
+            function formatElapsed(seconds) {
+                var hrs = Math.floor(seconds / 3600);
+                var mins = Math.floor((seconds % 3600) / 60);
+                var secs = seconds % 60;
+                if (hrs > 0) return hrs + 'h ' + mins + 'm';
+                if (mins > 0) return mins + 'm ' + secs + 's';
+                return secs + 's';
+            }
+
+            function refreshPendingDownloads() {
+                $.ajax({
+                    url: 'ajax.php?ajax=pending_downloads',
+                    dataType: 'json',
+                    timeout: 5000,
+                    success: function(data) {
+                        $('#pending-downloads-loading').hide();
+                        if (data.count > 0) {
+                            $('#pending-downloads-empty').hide();
+                            $('#pending-downloads-table').show();
+                            var html = '';
+                            $.each(data.downloads, function(i, dl) {
+                                var progressColor = dl.percent >= 100 ? '#4CAF50' : '#2196F3';
+                                html += '<tr class="flistmouseoff">';
+                                html += '<td title="' + dl.link + '"><b>' + dl.filename + '</b></td>';
+                                html += '<td style="width:150px;">';
+                                html += '<div style="background:#ddd; border-radius:4px; overflow:hidden; height:20px;">';
+                                html += '<div style="background:' + progressColor + '; width:' + dl.percent + '%; height:100%; transition:width 0.3s;"></div>';
+                                html += '</div>';
+                                html += '<small>' + dl.percent + '%</small>';
+                                html += '</td>';
+                                html += '<td>' + dl.received + '</td>';
+                                html += '<td>' + dl.total + '</td>';
+                                html += '<td>' + formatElapsed(dl.elapsed) + '</td>';
+                                html += '</tr>';
+                            });
+                            $('#pending-downloads-body').html(html);
+                        } else {
+                            $('#pending-downloads-table').hide();
+                            $('#pending-downloads-empty').show();
+                        }
+                    },
+                    error: function() {
+                        $('#pending-downloads-loading').hide();
+                        $('#pending-downloads-empty').text('Error loading downloads').show();
+                    }
+                });
+            }
+
+            function startPendingDownloadsRefresh() {
+                if (pendingDownloadsTimer) clearInterval(pendingDownloadsTimer);
+                $('#pending-downloads-loading').show();
+                refreshPendingDownloads();
+                pendingDownloadsTimer = setInterval(refreshPendingDownloads, 3000);
+            }
+
+            function stopPendingDownloadsRefresh() {
+                if (pendingDownloadsTimer) {
+                    clearInterval(pendingDownloadsTimer);
+                    pendingDownloadsTimer = null;
+                }
+            }
+
+            // Start refresh when tab 4 is clicked
+            $(document).ready(function() {
+                $('#navcell4').on('click', function() {
+                    startPendingDownloadsRefresh();
+                });
+            });
+            /* ]]> */
+            </script>
         </div>
 
         <?php
